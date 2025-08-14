@@ -18,6 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>  <link rel="manifest" href="/manifest.json" /> </head>
       <body className={inter.className}>
         {/* Wrap the entire app with the AuthProvider */}
         <AuthProvider>
