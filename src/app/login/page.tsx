@@ -58,7 +58,7 @@ export default function LoginPage() {
         </form>
         <div className="mt-4 flex items-center justify-center"><div className="flex-grow border-t border-slate-300"></div><span className="mx-4 flex-shrink text-sm text-slate-500">atau</span><div className="flex-grow border-t border-slate-300"></div></div>
         <button onClick={handleGoogleLogin} className="mt-4 w-full flex justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-lg font-bold text-slate-700 shadow-sm hover:bg-slate-50"><Image src="https://www.google.com/favicon.ico" alt="Google icon" width={20} height={20}/> Lanjutkan dengan Google</button>
-        <p className="mt-6 text-center text-sm">Belum punya akun? <Link href="/register" className="font-semibold text-blue-600 hover:underline">Daftar disini</Link></p>
+        <p className="mt-6 text-center text-sm text-slate-800">Belum punya akun? <Link href="/register" className="font-semibold text-blue-600 hover:underline">Daftar disini</Link></p>
       </div>
     </div>
   );
