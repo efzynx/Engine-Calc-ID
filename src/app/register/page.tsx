@@ -24,32 +24,27 @@ export default function RegisterPage() {
       const user = userCredential.user;
 
       if (user) {
-        // Generate a default avatar URL
         const photoURL = `https://ui-avatars.com/api/?name=${displayName}&background=0D8ABC&color=fff`;
-
-        // Update Auth profile with name and photo
         await updateProfile(user, { displayName, photoURL });
-
-        // Create a user document in Firestore
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
           displayName: displayName,
           email: user.email,
-          photoURL: photoURL, // ADDED: Save the default photo URL
+          photoURL: photoURL,
           status: "Free User",
           calculationCount: 0,
           lastCalculationDate: null,
         });
       }
       router.push('/');
-    } catch (err: any) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Email ini sudah terdaftar.');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Password terlalu lemah (minimal 6 karakter).');
-      } else {
-        setError('Gagal membuat akun.');
-      }
+    } catch (err: any) { // Fixed: Specify error type
+        if (err.code === 'auth/email-already-in-use') {
+            setError('Email ini sudah terdaftar.');
+        } else if (err.code === 'auth/weak-password') {
+            setError('Password terlalu lemah (minimal 6 karakter).');
+        } else {
+            setError('Gagal membuat akun.');
+        }
     } finally {
       setIsLoading(false);
     }

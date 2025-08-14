@@ -1,11 +1,12 @@
 'use client'
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Import next/image
 import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { LogIn, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react'; // LogIn is removed as it's unused
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,8 +20,12 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) { // Fixed: Specify error type
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Terjadi kesalahan yang tidak diketahui.");
+      }
     }
   };
 
@@ -29,24 +34,26 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
       const additionalUserInfo = getAdditionalUserInfo(result);
+
       if (additionalUserInfo?.isNewUser) {
-        // If they are new, create their document in the 'users' collection
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
           displayName: user.displayName,
           email: user.email,
-          photoURL: user.photoURL, // ADDED: Save the photo URL
+          photoURL: user.photoURL,
           status: "Free User",
           calculationCount: 0,
           lastCalculationDate: null,
         });
       }
-      
       router.push('/');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) { // Fixed: Specify error type
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Terjadi kesalahan yang tidak diketahui.");
+      }
     }
   };
 
@@ -74,9 +81,10 @@ export default function LoginPage() {
           <div className="flex-grow border-t border-slate-300"></div>
         </div>
         <button onClick={handleGoogleLogin} className="mt-4 w-full flex justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-lg font-bold text-slate-700 shadow-sm hover:bg-slate-50">
-          <img src="https://www.google.com/favicon.ico" alt="Google icon" className="w-5 h-5"/> Lanjutkan dengan Google
+          {/* Fixed: Use next/image */}
+          <Image src="https://www.google.com/favicon.ico" alt="Google icon" width={20} height={20}/> Lanjutkan dengan Google
         </button>
-        <p className="mt-6 text-center text-sm text-slate-700">
+        <p className="mt-6 text-center text-sm">
           Belum punya akun? <Link href="/register" className="font-semibold text-blue-600 hover:underline">Daftar disini</Link>
         </p>
       </div>

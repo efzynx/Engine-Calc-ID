@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import next/image
 import { useAuth } from '@/context/auth-context';
 import { updateProfile, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
@@ -40,8 +41,12 @@ const ProfilePageContent: React.FC = () => {
             const userDocRef = doc(db, 'users', user.uid);
             await updateDoc(userDocRef, { displayName });
             setMessage('Nama tampilan berhasil diperbarui!');
-        } catch (err: any) {
-            setError(`Error: ${err.message}`);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(`Error: ${err.message}`);
+            } else {
+                setError("Terjadi kesalahan yang tidak diketahui.");
+            }
         } finally {
             setIsSaving(false);
         }
@@ -54,8 +59,12 @@ const ProfilePageContent: React.FC = () => {
             try {
                 await sendPasswordResetEmail(auth, user.email);
                 setMessage('Email untuk reset password telah dikirim.');
-            } catch (err: any) {
-                setError(`Gagal mengirim email: ${err.message}`);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(`Gagal mengirim email: ${err.message}`);
+                } else {
+                    setError("Terjadi kesalahan yang tidak diketahui.");
+                }
             }
         }
     };
@@ -66,13 +75,16 @@ const ProfilePageContent: React.FC = () => {
             try {
                 await deleteUser(user);
                 router.push('/login');
-            } catch (err: any) {
-                setError(`Gagal menghapus akun: ${err.message}`);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(`Gagal menghapus akun: ${err.message}`);
+                } else {
+                    setError("Terjadi kesalahan yang tidak diketahui.");
+                }
             }
         }
     };
     
-    // ADDED: Function to handle the upgrade button click
     const handleUpgradeClick = () => {
         alert("Paket Pro masih belum tersedia. Hubungi admin jika kamu sudah terkena limit harian.");
     };
@@ -88,11 +100,13 @@ const ProfilePageContent: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="flex flex-col items-center md:border-r md:pr-8">
-                        <img 
+                        <Image 
                             key={user.uid}
                             src={profileImgError || !user.photoURL ? `https://ui-avatars.com/api/?name=${user.displayName || 'A'}&background=0D8ABC&color=fff&size=128` : user.photoURL} 
                             onError={() => setProfileImgError(true)}
                             alt="Foto Profil" 
+                            width={128}
+                            height={128}
                             className="w-32 h-32 rounded-full object-cover mb-4" 
                         />
                         <h2 className="text-xl font-bold text-slate-800 text-center">{user.displayName}</h2>
@@ -137,7 +151,6 @@ const ProfilePageContent: React.FC = () => {
                 </div>
             </div>
 
-            {/* Upgrade to Pro Section */}
             {!isPremium && (
                 <div className="bg-slate-800 rounded-xl shadow-lg p-8 text-white">
                     <div className="flex flex-col md:flex-row items-center gap-6">
@@ -148,7 +161,6 @@ const ProfilePageContent: React.FC = () => {
                             <h3 className="text-2xl font-bold">Upgrade ke Pro</h3>
                             <p className="text-slate-300 mt-1">Dapatkan lebih banyak fitur dan perhitungan harian tanpa batas!</p>
                         </div>
-                        {/* UPDATED: Button now triggers the alert */}
                         <button 
                             onClick={handleUpgradeClick}
                             className="bg-yellow-400 text-slate-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-300 transition-colors"
