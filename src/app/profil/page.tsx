@@ -41,7 +41,7 @@ const ProfilePageContent: React.FC = () => {
             const userDocRef = doc(db, 'users', user.uid);
             await updateDoc(userDocRef, { displayName });
             setMessage('Nama tampilan berhasil diperbarui!');
-        } catch (err) {
+        } catch (err) { // FIXED: Properly type the error
             if (err instanceof Error) {
                 setError(`Error: ${err.message}`);
             } else {
@@ -59,7 +59,7 @@ const ProfilePageContent: React.FC = () => {
             try {
                 await sendPasswordResetEmail(auth, user.email);
                 setMessage('Email untuk reset password telah dikirim.');
-            } catch (err) {
+            } catch (err) { // FIXED: Properly type the error
                 if (err instanceof Error) {
                     setError(`Gagal mengirim email: ${err.message}`);
                 } else {
@@ -75,7 +75,7 @@ const ProfilePageContent: React.FC = () => {
             try {
                 await deleteUser(user);
                 router.push('/login');
-            } catch (err) {
+            } catch (err) { // FIXED: Properly type the error
                 if (err instanceof Error) {
                     setError(`Gagal menghapus akun: ${err.message}`);
                 } else {
@@ -100,6 +100,7 @@ const ProfilePageContent: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="flex flex-col items-center md:border-r md:pr-8">
+                        {/* FIXED: Use next/image component */}
                         <Image 
                             key={user.uid}
                             src={profileImgError || !user.photoURL ? `https://ui-avatars.com/api/?name=${user.displayName || 'A'}&background=0D8ABC&color=fff&size=128` : user.photoURL} 
