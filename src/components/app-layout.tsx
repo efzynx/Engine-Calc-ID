@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 // ADDED: New icons for the collapsible menu
-import { ChevronsLeft, Calculator, Gauge, FastForward, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown, Tangent } from 'lucide-react';
+import { ChevronsLeft, Calculator, Gauge, FastForward, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown, Tangent, GitCommit } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -109,6 +109,9 @@ export const AppLayout: React.FC<{ children: React.ReactNode, title: string }> =
                 { href: "/engine/volume-cc", text: "Volume (CC)" },
                 { href: "/engine/rasio-kompresi", text: "Rasio Kompresi" },
                 { href: "/engine/kecepatan-piston", text: "Kecepatan Piston" },
+                { href: "/engine/horsepower", text: "Engine Horsepower" },
+                { href: "/engine/torque", text: "Engine Torque" },
+                { href: "/engine/klep-in-ex", text: "Ukuran Klep" },
               ]}
             />
             <CollapsibleMenuItem
@@ -117,6 +120,14 @@ export const AppLayout: React.FC<{ children: React.ReactNode, title: string }> =
             subItems={[
               { href: "/fuel-air/karburator-cfm", text: "Karburator Cfm" },
               { href: "/fuel-air/rekomendasi-karburator", text: "Ukuran Karburator" },
+              ]}
+            />
+            <CollapsibleMenuItem
+              icon={<GitCommit size={20} />}
+              text="Transmisi & Roda"
+              subItems={[
+                { href: "/transmisi/rasio-gearbox", text: "Rasio Girboks" },
+                { href: "/transmisi/top-speed", text: "Kalkulator Top Speed" },
               ]}
             />
           </ul>
