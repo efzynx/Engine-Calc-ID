@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 // ADDED: New icons for the collapsible menu
-import { ChevronsLeft, Calculator, Gauge, FastForward, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown } from 'lucide-react';
+import { ChevronsLeft, Calculator, Gauge, FastForward, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown, Tangent } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -106,9 +106,17 @@ export const AppLayout: React.FC<{ children: React.ReactNode, title: string }> =
               icon={<Wrench size={20} />} 
               text="Engine Calculators"
               subItems={[
-                { href: "/", text: "Volume (CC)" },
-                { href: "/rasio-kompresi", text: "Rasio Kompresi" },
-                { href: "/kecepatan-piston", text: "Kecepatan Piston" },
+                { href: "/engine/volume-cc", text: "Volume (CC)" },
+                { href: "/engine/rasio-kompresi", text: "Rasio Kompresi" },
+                { href: "/engine/kecepatan-piston", text: "Kecepatan Piston" },
+              ]}
+            />
+            <CollapsibleMenuItem
+            icon={<Tangent size={20} />}
+            text="Fuel Consumption"
+            subItems={[
+              { href: "/fuel-air/karburator-cfm", text: "Karburator Cfm" },
+              { href: "/fuel-air/rekomendasi-karburator", text: "Ukuran Karburator" },
               ]}
             />
           </ul>
