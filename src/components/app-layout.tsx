@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ChevronsLeft, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown, Tangent, GitCommit, Home } from 'lucide-react';
+import { ChevronsLeft, User as UserIcon, Menu, LogIn, LogOut, Wrench, ChevronDown, Tangent, GitCommit, Home, CircleDot} from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -118,11 +118,18 @@ export const AppLayout: React.FC<{ children: React.ReactNode, title: string }> =
             />
             <CollapsibleMenuItem
               icon={<GitCommit size={20} />}
-              text="Transmisi & Roda"
+              text="Transmisi"
               subItems={[
                 // Using your path: rasio-gearbox
                 { href: "/transmisi/rasio-gearbox", text: "Rasio Girboks" },
                 { href: "/transmisi/top-speed", text: "Kalkulator Top Speed" },
+              ]}
+            />
+            <CollapsibleMenuItem
+              icon={<CircleDot size={20} />}
+              text="Roda & Ban"
+              subItems={[
+                { href: "/roda-ban/perbandingan-ukuran", text: "Perbandingan Ukuran Ban" },
               ]}
             />
           </ul>

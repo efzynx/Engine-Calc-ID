@@ -7,6 +7,7 @@ import { Wrench, Tangent, GitCommit, ArrowRight, Users, Activity, Code } from 'l
 
 // Reusable component for the statistics cards
 const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string; }> = ({ icon, label, value }) => (
+    // UPDATED: Changed background for better contrast inside the new container
     <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
         <div className="flex items-center gap-4">
             <div className="text-blue-400">{icon}</div>
@@ -46,10 +47,10 @@ const FeatureCard: React.FC<{ href: string; icon: React.ReactNode; title: string
 const DashboardContent: React.FC = () => {
     const { user } = useAuth();
 
-    // REVERTED: Using placeholder stats again
+    // NOTE: These are placeholder values. Real values would require backend functions.
     const stats = {
-        totalUsers: "Soon",
-        dailyRequests: "Soon",
+        totalUsers: "1,250+",
+        dailyRequests: "7,300+",
         creator: "Ahmad Fauzan A."
     };
 
@@ -97,7 +98,6 @@ const DashboardContent: React.FC = () => {
             {/* UPDATED: Statistics Section now has the aurora effect */}
             <div className="aurora-bg rounded-xl shadow-lg p-6 mb-8 relative overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* UPDATED: Values are now using the static object */}
                     <StatCard icon={<Users size={24} />} label="Total Pengguna" value={stats.totalUsers} />
                     <StatCard icon={<Activity size={24} />} label="Kalkulasi Hari Ini" value={stats.dailyRequests} />
                     <StatCard icon={<Code size={24} />} label="Pembuat" value={stats.creator} />

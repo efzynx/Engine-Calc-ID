@@ -2,9 +2,14 @@
 import React, { useState } from 'react';
 import { SlidersHorizontal, Info, ChevronDown } from 'lucide-react';
 import { AppLayout } from '@/components/app-layout';
+import { useAuth } from '@/context/auth-context';
+import { db } from '@/lib/firebase';
+import { doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 
 // The actual calculator component
 const KalkulatorRasioKompresi: React.FC = () => {
+  const { user, userProfile } = useAuth();
+
   const [vcc, setVcc] = useState<string>(''); // Volume Ruang Bakar
   const [vp, setVp] = useState<string>('');  // Volume Paking
   const [vk, setVk] = useState<string>('');  // Volume Kubah Piston
@@ -14,8 +19,21 @@ const KalkulatorRasioKompresi: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isFormulaVisible, setIsFormulaVisible] = useState(false);
 
-  const handleCalculate = () => {
+  const handleCalculate = async () => {
     setError(null);
+
+    // --- USAGE LIMIT LOGIC ---
+    if (user && userProfile && userProfile.status === 'Free User') {
+      const today = new Date().toDateString();
+      const lastCalcDate = userProfile.lastCalculationDate?.toDate().toDateString();
+
+      if (lastCalcDate === today && userProfile.calculationCount >= 50) {
+        setError("Anda telah mencapai batas perhitungan harian (50 kali).");
+        return;
+      }
+    }
+    // --- END USAGE LIMIT LOGIC ---
+
     const vccNum = parseFloat(vcc);
     const vpNum = parseFloat(vp);
     const vkNum = parseFloat(vk);
@@ -38,6 +56,22 @@ const KalkulatorRasioKompresi: React.FC = () => {
 
     const calculatedRatio = (vsNum + totalVolumeRuangBakar) / totalVolumeRuangBakar;
     setRasio(calculatedRatio);
+
+    // --- UPDATE FIRESTORE DATA ---
+    if (user && userProfile) {
+      const userDocRef = doc(db, 'users', user.uid);
+      const today = new Date().toDateString();
+      const lastCalcDate = userProfile.lastCalculationDate?.toDate().toDateString();
+      if (lastCalcDate === today) {
+        await updateDoc(userDocRef, { calculationCount: increment(1) });
+      } else {
+        await updateDoc(userDocRef, {
+          calculationCount: 1,
+          lastCalculationDate: serverTimestamp()
+        });
+      }
+    }
+    // --- END UPDATE FIRESTORE DATA ---
   };
 
   return (
