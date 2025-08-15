@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { updateUserCount } from '@/lib/stats'; // Import helper
+import { updateUserCount } from '@/lib/stats';
 
 export default function RegisterPage() {
   const [displayName, setDisplayName] = useState('');
@@ -29,24 +29,32 @@ export default function RegisterPage() {
           uid: user.uid, displayName, email, photoURL,
           status: "Free User", calculationCount: 0, lastCalculationDate: null,
         });
-        // Panggil helper untuk menambah total pengguna
         await updateUserCount('increment');
       }
       router.push('/');
-    } catch (err: any) {
-      // ... error handling
+    } catch (err) { // FIXED: Properly type the error
+        if (err instanceof Error && 'code' in err) {
+            const firebaseError = err as { code: string };
+            if (firebaseError.code === 'auth/email-already-in-use') {
+                setError('Email ini sudah terdaftar.');
+            } else if (firebaseError.code === 'auth/weak-password') {
+                setError('Password terlalu lemah (minimal 6 karakter).');
+            } else {
+                setError('Gagal membuat akun.');
+            }
+        } else {
+            setError('Terjadi kesalahan yang tidak diketahui.');
+        }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ... (sisa kode JSX tidak berubah)
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
         <h1 className="text-3xl font-bold text-center text-slate-800">Daftar Akun Baru</h1>
         <form onSubmit={handleRegister} className="mt-8 space-y-4">
-          {/* ... input fields ... */}
           <div><label className="block text-sm font-medium text-slate-700">Nama Tampilan</label><input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required className="mt-1 w-full rounded-md border-slate-300 p-3 shadow-sm text-slate-900"/></div>
           <div><label className="block text-sm font-medium text-slate-700">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 w-full rounded-md border-slate-300 p-3 shadow-sm text-slate-900"/></div>
           <div><label className="block text-sm font-medium text-slate-700">Password (minimal 6 karakter)</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-1 w-full rounded-md border-slate-300 p-3 shadow-sm text-slate-900"/></div>
